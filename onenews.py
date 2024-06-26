@@ -27,19 +27,33 @@ def extract_article_data(url):
 
     # Extract rating
     rating = "Rating: Not Rated"
-    article_container = soup.find('div', class_='common-text-content-container')
-    if article_container:
-        rating_tag = article_container.find('p', string='RATING:')
-        if rating_tag:
-            rating_text = rating_tag.find_next('strong').text.strip() if rating_tag.find('strong') else rating_tag.text.strip()
-            rating = f"Rating: {rating_text}"
+    # Find all <div> tags with class 'common-text-content-container'
+    div_tags = soup.find_all('div', class_='common-text-content-container')
+    # Iterate over each <div> tag to find the rating
+    for div_tag in div_tags:
+        # Iterate through all <p> tags within the <div>
+        for p_tag in div_tag.find_all('p'):
+            # Check if the <p> tag contains a <strong> tag with "RATING:"
+            strong_tag = p_tag.find('strong')
+            if strong_tag and 'RATING:' in strong_tag.get_text():
+                # Extract the full text of the <p> tag
+                full_text = p_tag.get_text()
+                rating = full_text.split('RATING:')[-1].strip()
+                break
+        else:
+            continue
+        break
+    else:
+        rating = "Unavailable"
 
     # Extract article body
     article_content = ""
-    main_content_container = soup.find('div', class_='common-text-content-container')
-    if main_content_container:
-        for paragraph in main_content_container.find_all('p'):
-            article_content += paragraph.get_text(strip=True) + "\n\n"
+    for div_tag in div_tags:
+        for p_tag in div_tag.find_all('p'):
+            article_content += p_tag.get_text(strip=True) + "\n\n"
+        else:
+            continue
+        break
 
     # Return the extracted data
     return {
@@ -57,6 +71,6 @@ article_data = extract_article_data(url)
 if article_data:
     print("Title:", article_data['title'],'\n')
     print("Author:", article_data['author'],'\n')
-    print("Publishing Date/Time:", article_data['date'],'\n')
+    print("Publishing Date:", article_data['date'],'\n')
     print("Rating:", article_data['rating'],'\n')
     print("Body Text:", article_data['body'])

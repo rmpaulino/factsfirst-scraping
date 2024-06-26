@@ -68,7 +68,7 @@ def extract_article_data(url):
     }
 
 # Example usage
-url = "https://interaksyon.philstar.com/rumor-cop/2022/03/31/214062/leonen-quells-rumors-on-bar-exam-results-release-oath-taking-date/"
+url = "https://interaksyon.philstar.com/rumor-cop/2022/03/31/214004/calls-to-mass-report-altered-video-where-robredos-supporters-are-chanting-rivals-name/"
 article_data = extract_article_data(url)
 
 if article_data:
