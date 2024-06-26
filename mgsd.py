@@ -21,10 +21,12 @@ def extract_article_data(url):
     date_tag = soup.find('span', class_='td-post-date')
     date = date_tag.text.strip() if date_tag else "Unknown Date/Time"
 
+    # Extract article body
     article_content = ""
     
     possible_containers = [
-        'td-post-content tagdiv-type'
+        'td-post-content tagdiv-type',
+        'td-ss-main-content'
     ]
     
     article_container = None
@@ -44,10 +46,18 @@ def extract_article_data(url):
     else:
         article_content = "Could not find article content."
 
+    # Extract article rating
+    rating = "Not Rated"
+    rating_tag = article_container.find('p', string='Rating:')
+    if rating_tag:
+        rating_text = rating_tag.text.strip().replace('Rating:', '').strip()
+        rating = rating_text
+
     # Return the extracted data
     return {
         'title': title,
         'date': date,
+        'rating': rating,
         'body': article_content.strip()
     }
 
@@ -57,5 +67,7 @@ article_data = extract_article_data(url)
 
 if article_data:
     print("Title:", article_data['title'],'\n')
-    print("Publishing Date/Time:", article_data['date'],'\n')
+    print("Author: MGSD",'\n')
+    print("Publishing Date:", article_data['date'],'\n')
+    print("Rating:", article_data['rating'],'\n')
     print("Body Text:", article_data['body'])

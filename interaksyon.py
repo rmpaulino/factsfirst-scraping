@@ -17,10 +17,25 @@ def extract_article_data(url):
     title_tag = soup.find('h1', class_='entry-title')
     title = title_tag.text.strip() if title_tag else "Unknown Title"
 
-    # Extract publishing date/time
-    date_tag = soup.find('div', class_='meta-info')
-    date = date_tag.text.strip() if date_tag else "Unknown Date/Time"
+    # Extract publishing date/time and author
+    date = "Unknown Date/Time"
+    author = "Unknown Author"
 
+    # Check for specific author and date structure
+    author_tag = soup.find('div', class_='td-post-author-name')
+    if author_tag:
+        author_name = author_tag.find('a')
+        author = author_name.text.strip() if author_name else "Unknown Author"
+
+    date_tag = soup.find('div', class_='meta-info')
+    if date_tag:
+        date_text = date_tag.text.strip()
+        # Extracting date and time separately
+        date_parts = date_text.split('-')
+        if len(date_parts) > 1:
+            date = date_parts[1].strip() 
+
+    # Extract article body
     article_content = ""
     
     possible_containers = [
@@ -47,6 +62,7 @@ def extract_article_data(url):
     # Return the extracted data
     return {
         'title': title,
+        'author': author,
         'date': date,
         'body': article_content.strip()
     }
@@ -57,5 +73,7 @@ article_data = extract_article_data(url)
 
 if article_data:
     print("Title:", article_data['title'],'\n')
-    print("Publishing Date/Time:", article_data['date'],'\n')
+    print("Author:", article_data['author'],'\n')
+    print("Publishing Date:", article_data['date'],'\n')
+    print("Rating: Not Rated",'\n')
     print("Body Text:", article_data['body'])
