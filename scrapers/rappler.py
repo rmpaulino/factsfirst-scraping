@@ -10,7 +10,19 @@ def extract_rappler_article(url):
     
     author_element = soup.find('span', class_='post-single__author-name')
     author = author_element.text.strip() if author_element else "Author not found"
-    
+
+    meta_div = soup.find('div', class_='post-single__meta')
+    if meta_div:
+        # Find the <time> tag within the <div>
+        time_tag = meta_div.find('time', class_='entry-date published post__timeago')
+        
+        if time_tag:
+            # Extract the date from the <time> tag
+            date = time_tag.get_text().split(' ')[0:3]
+            date = " ".join(date)
+    else:
+        date = "Date not found"
+
     # Look for rating in elements with class 'wp-block-heading'
     rating = "Rating not found"
     rating_elements = soup.find_all(class_='wp-block-heading')
@@ -48,6 +60,7 @@ def extract_rappler_article(url):
     return {
         'title': title,
         'author': author,
+        'date': date,
         'rating': rating,
         'content': article_content.strip()
     }
@@ -58,5 +71,6 @@ article_data = extract_rappler_article(url)
 
 print(f"Title: {article_data['title']}")
 print(f"Author: {article_data['author']}")
+print(f"Date: {article_data['date']}")
 print(f"Rating: {article_data['rating']}")
 print(f"Content:\n{article_data['content']}")
