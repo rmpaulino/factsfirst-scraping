@@ -69,8 +69,8 @@ def get_fact_check_details(url):
     }
 
 # Example usage
-url = 'https://www.altermidya.net/fact-check-nagresulta-ba-sa-kapayapaan-ang-pakikipag-usap-ng-administrasyong-duterte-sa-mga-rebeldeng-grupo/'  # Replace with the actual URL of the fact-check article
-#url = "https://www.altermidya.net/sona2022-fact-check-pres-marcos-jr-claims-he-will-improve-welfare-of-health-workers/"
+print("Paste the AlterMidya URL: ")
+url = input()
 fact_check_details = get_fact_check_details(url)
 
 if fact_check_details:
