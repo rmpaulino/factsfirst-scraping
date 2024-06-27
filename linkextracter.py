@@ -14,9 +14,9 @@ base_url = "https://factsfirst.ph/fact-checks"
 allowed_domains = {
     "www.rappler.com",
     "www.altermidya.net",
-    "www.interaksyon.philstar.com",
+    "interaksyon.philstar.com",
     "www.onenews.ph",
-    "www.mindanaogoldstardaily.com"
+    "mindanaogoldstardaily.com"
 }
 
 # Set to store unique links across all pages
@@ -39,6 +39,8 @@ def extract_links(soup, base_url, allowed_domains):
             href = link['href']
             absolute_url = urljoin(base_url, href)
             domain = urlparse(absolute_url).netloc
+            if not domain == "www.rappler.com":
+                print(domain)
             if domain in allowed_domains:
                 unique_links.add(absolute_url)
     return unique_links
