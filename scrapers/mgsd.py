@@ -19,7 +19,26 @@ def extract_article_data(url):
 
     # Extract publishing date/time
     date_tag = soup.find('span', class_='td-post-date')
-    date = date_tag.text.strip() if date_tag else "Unknown Date/Time"
+
+    if date_tag:
+        # Find the <time> tag within the <span>
+        time_tag = date_tag.find('time')
+        if time_tag:
+            # Extract the full date string from the <time> tag
+            full_date = time_tag.get_text().strip()
+            # Split the string to remove the day of the week and properly format the date
+            parts = full_date.split(',')
+            if len(parts) == 3:
+                day = parts[1].strip()
+                year = parts[2].strip()
+                date = f"{day}, {year}"
+                print(f"Publishing Date: {date}")
+            else:
+                print("Unknown Date/Time")
+        else:
+            print("Unknown Date/Time")
+    else:
+        print("Unknown Date/Time")
 
     # Extract article body
     article_content = ""
@@ -78,7 +97,8 @@ def extract_article_data(url):
     }
 
 # Example usage
-url = "https://mindanaogoldstardaily.com/archives/129938"
+print("Paste the MGSD URL: ")
+url = input()
 article_data = extract_article_data(url)
 
 if article_data:

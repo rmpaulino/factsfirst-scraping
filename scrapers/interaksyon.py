@@ -68,7 +68,8 @@ def extract_article_data(url):
     }
 
 # Example usage
-url = "https://interaksyon.philstar.com/rumor-cop/2022/03/31/214004/calls-to-mass-report-altered-video-where-robredos-supporters-are-chanting-rivals-name/"
+print("Paste the Interaskyon URL: ")
+url = input()
 article_data = extract_article_data(url)
 
 if article_data:

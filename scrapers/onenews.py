@@ -63,8 +63,8 @@ def extract_article_data(url):
     }
 
 # Example usage
-url = "https://www.onenews.ph/articles/fact-check-tiktok-user-spliced-willie-ong-s-claim-about-vice-presidential-debate?fbclid=IwAR0cvffy9bEtfktu7S5pq51duCQ9-AIyRfpaXXvFjF-FI2A-aVk3jTlWK1o"
-#url = "https://www.onenews.ph/articles/fact-check-pacquiao-did-not-withdraw-his-candidacy-for-president?fbclid=IwAR13fjQFQxuILEqx_G2sCChPdzwBCTd5sanzYXps7e9ag8WMaRd62MeJAqQ"
+print("Paste the OneNews URL: ")
+url = input()
 article_data = extract_article_data(url)
 
 if article_data:
