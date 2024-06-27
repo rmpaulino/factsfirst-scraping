@@ -335,10 +335,10 @@ def mindanaogoldstardaily_scraper(url):
     }
 
 
-filename = 'unique_links.txt'
+filename = r'factsfirst\uniquelinks.txt'
 if os.path.exists(filename):
     with open(filename, 'r') as file:
-        links = file.read().splitlines()[:100]  # Limit to the first 10 links
+        links = file.read().splitlines()  # Limit to the first 10 links
         
         # Prepare CSV file
         csv_filename = 'extracted_data.csv'
@@ -379,7 +379,7 @@ if os.path.exists(filename):
                 })
 
                 # Sleep to avoid overloading the server
-                time.sleep(1)
+                time.sleep(1.5)
 
         print(f"CSV file '{csv_filename}' has been created with extracted data.")
 else:

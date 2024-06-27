@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-'''
+
 def extract_article_data(url):
     # Send a GET request to the URL
     response = requests.get(url)
@@ -73,46 +73,3 @@ if article_data:
     print("Publishing Date:", article_data['date'],'\n')
     print("Rating:", article_data['rating'],'\n')
     print("Body Text:", article_data['body'])
-'''
-def onenews_scraper(url):
-    response = requests.get(url)
-    soup = BeautifulSoup(response.content, 'html.parser')
-    
-    title = soup.find('div', class_='post-header-container').text.strip() if soup.find('div', class_='post-header-container') else "Unknown Title"
-
-    date = soup.find('div', class_='post-meta-wrapper full-size ver-2').find_all('div', class_='meta-item')[1].text.strip() if soup.find('div', class_='post-meta-wrapper full-size ver-2') else "Unknown Date/Time"
-
-    author = soup.find('div', class_='post-meta-wrapper full-size ver-2').find_all('div', class_='meta-item')[0].text.strip() if soup.find('div', class_='post-meta-wrapper full-size ver-2') else "Unknown Author"
-
-    rating = "Unavailable"
-    div_tags = soup.find_all('div', class_='common-text-content-container')
-    for div_tag in div_tags:
-        for p_tag in div_tag.find_all('p'):
-            strong_tag = p_tag.find('strong')
-            if strong_tag and 'rating:' in strong_tag.get_text().lower().strip():
-                rating = strong_tag.get_text().split(':')[-1].strip()
-                break
-    
-    article_content = ""
-    for div_tag in div_tags:
-        for p_tag in div_tag.find_all('p'):
-            article_content += p_tag.get_text(strip=True) + "\n\n"
-    
-    return {
-        'title': title,
-        'author': author,
-        'date': date,
-        'rating': rating,
-        'content': article_content.strip()
-    }
-
-print("Paste the OneNews URL: ")
-url = input()
-article_data = onenews_scraper(url)
-
-if article_data:
-    print("Title:", article_data['title'],'\n')
-    print("Author:", article_data['author'],'\n')
-    print("Publishing Date:", article_data['date'],'\n')
-    print("Rating:", article_data['rating'],'\n')
-    print("Body Text:", article_data['content'])
