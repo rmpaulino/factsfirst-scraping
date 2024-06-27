@@ -335,7 +335,7 @@ def mindanaogoldstardaily_scraper(url):
     }
 
 
-filename = r'factsfirst\uniquelinks.txt'
+filename = r'uniquelinks.txt'
 if os.path.exists(filename):
     with open(filename, 'r') as file:
         links = file.read().splitlines()  # Limit to the first 10 links
