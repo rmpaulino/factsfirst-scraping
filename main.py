@@ -344,15 +344,49 @@ def mindanaogoldstardaily_scraper(url):
         'content': article_content.strip()
     }
 
+def baguiochronicle_scraper(url):
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+    }
 
-filename = r'uniquelinks.txt'
+    try:
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()  # Raise an exception for HTTP errors
+    except requests.exceptions.RequestException as e:
+        print(f"Failed to fetch the page: {e}")
+        return None
+
+    soup = BeautifulSoup(response.content, 'html.parser')
+
+    # Find the title of the webpage
+    website_title = soup.title.text.strip() if soup.title else 'No title found'
+
+    # Find the author (always 'Baguio Chronicle' based on your description)
+    author = "Baguio Chronicle"
+
+    # Find the rating if available
+    rating_tag = soup.find('div', class_='cxmmr5t8 oygrvhab hcukyx3x c1et5uql o9v6fnle ii04i59q')
+    rating = rating_tag.text.strip() if rating_tag else 'No rating'
+
+    # Find the date if available
+    date_tag = soup.find('div', class_='jeg_meta_date')
+    date_tag = date_tag.text.strip() if date_tag else 'No date available'
+
+    return {
+        'title': website_title,
+        'author': author,
+        'rating': rating,
+        'date': date_tag,
+    }
+
+filename = r'unique_links_baguio.txt'
 if os.path.exists(filename):
     with open(filename, 'r') as file:
         links = file.read().splitlines() # Limit to the first 10 links
         
         # Prepare CSV file
-        csv_filename = 'altermidya_extracted_data.csv'
-        csv_columns = ['Title', 'Author', 'Date', 'Rating', 'Link']
+        csv_filename = 'baguio_extracted_data.csv'
+        csv_columns = ['Title', 'Author', 'Date', 'Rating']
         with open(csv_filename, 'w', newline='', encoding='utf-8') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
             writer.writeheader()
@@ -366,8 +400,8 @@ if os.path.exists(filename):
                 data = {}
 
                 # Determine which scraper function to call based on domain
-                if domain == 'www.altermidya.net':
-                    data = altermidya_scraper(link)
+                if domain == 'thebaguiochronicle.com':
+                    data = baguiochronicle_scraper(link)
                     '''
                 elif domain == 'interaksyon.philstar.com':
                     data = interaksyon_scraper(link)
@@ -387,7 +421,6 @@ if os.path.exists(filename):
                     'Author': data.get('author', ''),
                     'Date': data.get('date', ''),
                     'Rating': data.get('rating', ''),
-                    'Link': link
                 })
 
                 # Sleep to avoid overloading the server
