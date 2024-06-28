@@ -145,27 +145,27 @@ def rappler_scraper(url):
 def altermidya_scraper(url):
     # Send a request to the webpage
     response = requests.get(url)
-
+    
     # Check if the request was successful
     if response.status_code != 200:
         print(f"Failed to retrieve the page. Status code: {response.status_code}")
         return None
-
+    
     # Parse the webpage content
     soup = BeautifulSoup(response.content, 'html.parser')
-
+    
     # Extract the title
     title_tag = soup.find('div', class_='et_pb_module et_pb_text et_pb_text_1_tb_body et_pb_text_align_left et_pb_bg_layout_light').find('div', class_='et_pb_text_inner')
     title = title_tag.get_text(strip=True) if title_tag else 'No Title Found'
 
-    # Extract the date
+    # extract the date
     date_tag = soup.find('div', class_='et_pb_module et_pb_text et_pb_text_2_tb_body et_pb_text_align_left et_pb_bg_layout_light').find('div', class_='et_pb_text_inner')
     date = date_tag.get_text(strip=True) if date_tag else 'No Date Found'
 
     # Extract the author
     author_tag = soup.find('meta', attrs={'name': 'author'})
     author = author_tag['content'] if author_tag else 'No Author Found'
-
+    
     # Extract the rating
     rating = 'No Rating Found'
     for h4 in soup.find_all('h4', class_='wp-block-heading'):
@@ -182,7 +182,7 @@ def altermidya_scraper(url):
             next_div = rating_div.find_next_sibling('div')
             if next_div:
                 rating = next_div.get_text(strip=True)
-
+    
     # Extract the full article text
     article_text = []
     article_tag = soup.find('div', class_='et_pb_section et_pb_section_2_tb_body et_section_regular')
@@ -191,7 +191,7 @@ def altermidya_scraper(url):
             paragraph_text = p.get_text(strip=True)
             if paragraph_text and paragraph_text not in article_text:  # Check for duplicates
                 article_text.append(paragraph_text)
-        article = '\n'.join(article_text) if article_text else 'No Article Found'
+        article = '\n'.join(article_text) if article_text else 'No Article Found'''
         if article_text == []:
             for div in article_tag.find_all('div', recursive=False):
                 paragraph_text = div.get_text(strip=True)
@@ -200,22 +200,14 @@ def altermidya_scraper(url):
             article = '\n'.join(article_text) if article_text else 'No Article Found'
     else:
         article = 'No Article Found'
-
+    
     return {
-        'Title': title,
-        'Author': author,
-        'Date': date,
-        'Rating': rating,
-        'Full Article': article
+        'title': title,
+        'author': author,
+        'date': date,
+        'rating': rating,
+        'content': article
     }
-    # return {
-    #     'title': "None",
-    #     'author': "None",
-    #     'date': "None",
-    #     'rating': "None",
-    #     'content': "None"
-    # }
-    # pass
 
 # Function to fetch and parse data from Interaksyon
 def interaksyon_scraper(url):
@@ -335,13 +327,13 @@ def mindanaogoldstardaily_scraper(url):
     }
 
 
-filename = r'uniquelinks.txt'
+filename = r'factsfirst\uniquelinks.txt'
 if os.path.exists(filename):
     with open(filename, 'r') as file:
-        links = file.read().splitlines()  # Limit to the first 10 links
+        links = file.read().splitlines() # Limit to the first 10 links
         
         # Prepare CSV file
-        csv_filename = 'extracted_data.csv'
+        csv_filename = 'altermidya_extracted_data.csv'
         csv_columns = ['Title', 'Author', 'Date', 'Rating']
         with open(csv_filename, 'w', newline='', encoding='utf-8') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
@@ -356,16 +348,18 @@ if os.path.exists(filename):
                 data = {}
 
                 # Determine which scraper function to call based on domain
-                if domain == 'www.rappler.com':
-                    data = rappler_scraper(link)
-                elif domain == 'www.altermidya.net':
+                #if domain == 'www.rappler.com':
+                #    data = rappler_scraper(link)
+                if domain == 'www.altermidya.net':
                     data = altermidya_scraper(link)
+                    '''
                 elif domain == 'interaksyon.philstar.com':
                     data = interaksyon_scraper(link)
                 elif domain == 'www.onenews.ph':
                     data = onenews_scraper(link)
                 elif domain == 'mindanaogoldstardaily.com':
                     data = mindanaogoldstardaily_scraper(link)
+                    '''
                 else:
                     print(f"No scraper function defined for {domain}")
                     continue
