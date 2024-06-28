@@ -27,20 +27,38 @@ def get_fact_check_details(url):
     
     # Extract the rating
     rating = 'No Rating Found'
-    for h4 in soup.find_all('h4', class_='wp-block-heading'):
-        if 'MARKA:' in h4.get_text():
+    # Check for 'MARKA:' and 'RATING:' in h4 tags
+    for h4 in soup.find_all('h4'):
+        if 'MARKA:' in h4.get_text().strip() or 'RATING:' in h4.get_text().strip():
             next_p = h4.find_next_sibling('p')
             if next_p:
-                strong_tag = next_p.find('strong')
-                if strong_tag:
-                    rating = strong_tag.get_text(strip=True)
-                    break
+                marka_text = next_p.get_text(strip=True)
+                rating = marka_text
+                break
+    # Check for 'RATING:' in div tags if not found in h4 tags
     if rating == 'No Rating Found':
         rating_div = soup.find('div', string='RATING:')
         if rating_div:
             next_div = rating_div.find_next_sibling('div')
             if next_div:
                 rating = next_div.get_text(strip=True)
+    # Check for 'MARKA:' in div tags if not found in h4 tags
+    elif rating == 'No Rating Found':
+        rating_div = soup.find('div', string='MARKA:')
+        if rating_div:
+            next_div = rating_div.find_next_sibling('div')
+            if next_div:
+                rating = next_div.get_text(strip=True)
+    #check for marka or rating in p tags if not in h4 or div
+    elif rating == 'No Rating Found':
+        for p in soup.find_all('p'):
+            strong_tag = p.find('strong')
+            if strong_tag and 'MARKA:' in strong_tag.get_text().strip():
+                # Extract text following the <br> tag
+                br_tag = strong_tag.find_next_sibling('br')
+                if br_tag and br_tag.next_sibling:
+                    rating = br_tag.next_sibling.strip()
+                break
     
     # Extract the full article text
     article_text = []
@@ -74,8 +92,8 @@ url = input()
 fact_check_details = get_fact_check_details(url)
 
 if fact_check_details:
-    print(f"Title: {fact_check_details['Title']}")
-    print(f"Author: {fact_check_details['Author']}")
-    print(f"Date: {fact_check_details['date']}")
+#    print(f"Title: {fact_check_details['Title']}")
+#    print(f"Author: {fact_check_details['Author']}")
+#    print(f"Date: {fact_check_details['date']}")
     print(f"Rating: {fact_check_details['Rating']}")
-    print(f"Full Article:\n{fact_check_details['Full Article']}")
+#    print(f"Full Article:\n{fact_check_details['Full Article']}")

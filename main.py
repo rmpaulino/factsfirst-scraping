@@ -168,20 +168,38 @@ def altermidya_scraper(url):
     
     # Extract the rating
     rating = 'No Rating Found'
-    for h4 in soup.find_all('h4', class_='wp-block-heading'):
-        if 'MARKA:' in h4.get_text():
+    # Check for 'MARKA:' and 'RATING:' in h4 tags
+    for h4 in soup.find_all('h4'):
+        if 'marka:' in h4.get_text().strip().lower() or 'rating:' in h4.get_text().strip().lower():
             next_p = h4.find_next_sibling('p')
             if next_p:
-                strong_tag = next_p.find('strong')
-                if strong_tag:
-                    rating = strong_tag.get_text(strip=True)
-                    break
+                marka_text = next_p.get_text(strip=True)
+                rating = marka_text
+                break
+    # Check for 'RATING:' in div tags if not found in h4 tags
     if rating == 'No Rating Found':
         rating_div = soup.find('div', string='RATING:')
         if rating_div:
             next_div = rating_div.find_next_sibling('div')
             if next_div:
                 rating = next_div.get_text(strip=True)
+    # Check for 'MARKA:' in div tags if not found in h4 tags
+    if rating == 'No Rating Found':
+        rating_div = soup.find('div', string='MARKA:')
+        if rating_div:
+            next_div = rating_div.find_next_sibling('div')
+            if next_div:
+                rating = next_div.get_text(strip=True)
+    #check for marka or rating in p tags if not in h4 or div
+    if rating == 'No Rating Found':
+        for p in soup.find_all('p'):
+            strong_tag = p.find('strong')
+            if strong_tag and 'marka:' in strong_tag.get_text().strip().lower() or strong_tag and 'rating:' in strong_tag.get_text().strip().lower():
+                # Extract text following the <br> tag
+                br_tag = strong_tag.find_next_sibling('br')
+                if br_tag and br_tag.next_sibling:
+                    rating = br_tag.next_sibling.strip()
+                break
     
     # Extract the full article text
     article_text = []
@@ -327,7 +345,7 @@ def mindanaogoldstardaily_scraper(url):
     }
 
 
-filename = r'factsfirst\uniquelinks.txt'
+filename = r'uniquelinks.txt'
 if os.path.exists(filename):
     with open(filename, 'r') as file:
         links = file.read().splitlines() # Limit to the first 10 links
