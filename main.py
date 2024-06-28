@@ -352,7 +352,7 @@ if os.path.exists(filename):
         
         # Prepare CSV file
         csv_filename = 'altermidya_extracted_data.csv'
-        csv_columns = ['Title', 'Author', 'Date', 'Rating']
+        csv_columns = ['Title', 'Author', 'Date', 'Rating', 'Link']
         with open(csv_filename, 'w', newline='', encoding='utf-8') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
             writer.writeheader()
@@ -366,8 +366,6 @@ if os.path.exists(filename):
                 data = {}
 
                 # Determine which scraper function to call based on domain
-                #if domain == 'www.rappler.com':
-                #    data = rappler_scraper(link)
                 if domain == 'www.altermidya.net':
                     data = altermidya_scraper(link)
                     '''
@@ -381,17 +379,19 @@ if os.path.exists(filename):
                 else:
                     print(f"No scraper function defined for {domain}")
                     continue
+                    
                 
                 # Write data to CSV
                 writer.writerow({
                     'Title': data.get('title', ''),
                     'Author': data.get('author', ''),
                     'Date': data.get('date', ''),
-                    'Rating': data.get('rating', '')
+                    'Rating': data.get('rating', ''),
+                    'Link': link
                 })
 
                 # Sleep to avoid overloading the server
-                time.sleep(1.5)
+                time.sleep(1)
 
         print(f"CSV file '{csv_filename}' has been created with extracted data.")
 else:
